@@ -1,0 +1,16 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: apt-get update && apt-get install -y build-essential autoconf automake libtool gettext pkg-config libssl-dev libargon2-dev git
+      - run: autoreconf -vfi
+      - run: ./configure --prefix=/opt/atheme --enable-contrib
+      - run: |
+          mkdir -p include/atheme
+          printf '#ifndef ATHEME_INC_SERNO_H\n#define ATHEME_INC_SERNO_H 1\n#define SERNO "ci"\n#endif\n' > include/atheme/serno.h
+      - run: make -o include/atheme/serno.h -j4
+        env:
+          SKIP_SERNO_H_GENERATION: "yes"

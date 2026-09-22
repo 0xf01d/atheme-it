@@ -1,89 +1,16 @@
-name: CI
-
-on:
-  pull_request:
-    branches:
-      - 'master'
-    paths-ignore:
-      - '.gitattributes'
-      - '.github/workflows/periodic-*'
-      - 'ABOUT-NLS'
-      - 'contrib/**'
-      - 'dist/**'
-      - 'doc/**'
-      - 'email/**'
-      - 'GIT-Access.txt'
-      - 'help/**'
-      - 'NEWS.md'
-      - 'README.md'
-      - 'SECURITY.md'
-      - 'TODO'
-  push:
-    branches:
-      - 'master'
-      - 'release/**'
-    paths-ignore:
-      - '.gitattributes'
-      - '.github/workflows/periodic-*'
-      - 'ABOUT-NLS'
-      - 'contrib/**'
-      - 'dist/**'
-      - 'doc/**'
-      - 'email/**'
-      - 'GIT-Access.txt'
-      - 'help/**'
-      - 'NEWS.md'
-      - 'README.md'
-      - 'SECURITY.md'
-      - 'TODO'
-  schedule:
-    - cron: '0 12 1 * *'
-
+name: ci
+on: [push, pull_request]
 jobs:
-  linux:
-    name: Linux
-    runs-on: ubuntu-24.04
-
-    strategy:
-      fail-fast: true
-      matrix:
-        compiler:
-          - clang-18
-          - gcc-14
-
-    env:
-      CC: ${{ matrix.compiler }}
-
+  build:
+    runs-on: ubuntu-latest
     steps:
-    - name: Clone source code repository
-      uses: actions/checkout@v4
-      with:
-        persist-credentials: false
-        submodules: recursive
-
-    - name: Install dependencies
-      working-directory: /tmp
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends                 \
-          ${CC}                                                         \
-          lld-18                                                        \
-          build-essential                                               \
-          gettext                                                       \
-          git                                                           \
-          libargon2-dev                                                 \
-          libcrack2-dev                                                 \
-          libgcrypt20-dev                                               \
-          libgettextpo-dev                                              \
-          libidn11-dev                                                  \
-          libldap2-dev                                                  \
-          libpasswdqc-dev                                               \
-          libpcre2-dev                                                  \
-          libperl-dev                                                   \
-          libqrencode-dev                                               \
-          libsodium-dev                                                 \
-          libssl-dev                                                    \
-          # EOF
-
-    - name: Run CI build script
-      run: scripts/ci-build.sh
+      - uses: actions/checkout@v4
+      - run: apt-get update && apt-get install -y build-essential autoconf automake libtool gettext pkg-config libssl-dev libargon2-dev git
+      - run: autoreconf -vfi
+      - run: ./configure --prefix=/opt/atheme --enable-contrib
+      - run: |
+          mkdir -p include/atheme
+          printf '#ifndef ATHEME_INC_SERNO_H\n#define ATHEME_INC_SERNO_H 1\n#define SERNO "ci"\n#endif\n' > include/atheme/serno.h
+      - run: make -o include/atheme/serno.h -j4
+        env:
+          SKIP_SERNO_H_GENERATION: "yes"

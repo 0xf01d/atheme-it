@@ -6,8 +6,8 @@
 
 AC_PREREQ([2.69])
 
-AC_LANG([C])
 AC_INIT([Atheme IRC Services], [7.3.0-rc2], [https://github.com/atheme/atheme/issues/], [atheme], [https://atheme.github.io/])
+AC_LANG([C])
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_FILES([buildsys.mk extra.mk])

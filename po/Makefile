@@ -38,7 +38,8 @@ LOCALES=            \
     es.po           \
     fr.po           \
     ru.po           \
-    tr.po
+    tr.po           \
+    it.po
 
 include ../buildsys.mk
 

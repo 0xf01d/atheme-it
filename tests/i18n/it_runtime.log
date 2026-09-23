@@ -1,0 +1,7 @@
+== Phase 1: Italian catalog active ==
+NickServ reply: :nickserv!nickserv@services.int NOTICE i18npa :i18npa non è un nickname registrato.
+PASS: NickServ replied in Italian via live IRC round-trip
+== Phase 2: en fallback with blanked msgstr ==
+NickServ reply: :nickserv!nickserv@services.int NOTICE i18npb :i18npb is not a registered nickname.
+PASS: blanked msgstr falls back to English
+ALL PASS

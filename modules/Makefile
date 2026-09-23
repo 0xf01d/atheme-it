@@ -23,6 +23,7 @@ SUBDIRS =                   \
     exttarget               \
     gameserv                \
     global                  \
+    import_azzurra          \
     groupserv               \
     helpserv                \
     hostserv                \
